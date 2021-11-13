@@ -23,7 +23,11 @@ fetch('https://packt-project-development.herokuapp.com/login', {
   .catch(err => console.log(err));
 
 
-fetch('https://packt-project-development.herokuapp.com/users')
+fetch('https://packt-project-development.herokuapp.com/users', {
+  headers:{
+    cookie: token
+  }
+})
   .then(response => response.text())
   .then(data => console.log(data))
   .catch(err => console.log(err));
