@@ -35,13 +35,19 @@ fetch('https://packt-project-development.herokuapp.com/users', {
 
   //post rentals
 
-  fetch('https://packt-project-development.herokuapp.com/rentals', {
-  method: 'POST',
-  body: JSON.stringify(todo),
-  headers: { 'Content-Type': 'application/json' }
-})
-  //.then(response => token = response.headers.get('set-cookie'))
-  .then(response => response.text())
-  .then(data => console.log(data))
-  .catch(err => console.log(err));
 
+  
+fetch('https://packt-project-development.herokuapp.com/rentals', {
+    method: 'POST',
+    body: JSON.stringify({
+    startDate: new Date("January 1, 2021 00:00:00"),
+    expiryDate: new Date("January 1, 2030 00:00:00"),
+    userId: 1,
+    rentalClientId: 1,
+    }),
+    headers: { 
+      cookie: token,
+      'Content-Type': 'application/json' 
+    }
+}).then(res => res.json())
+  .then(json => console.log(json));
