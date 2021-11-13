@@ -14,7 +14,6 @@ const Index = () => (
         type="email"
         label="Number of Bags"
         onChange={() => {}}
-        autoComplete="email"
       />
       <Button submit>Submit</Button>
     </FormLayout>
