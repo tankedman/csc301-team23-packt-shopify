@@ -1,53 +1,96 @@
-const fetch = require('node-fetch')
+const fetch = require("node-fetch");
 
-fetch('https://packt-project-development.herokuapp.com/login')
-  .then(response => response.text())
-  .then(data => console.log(data))
-  .catch(err => console.log(err));
+API_KEY = "6de18130-637f-4c38-ac3e-81f18c8251d7";
+LOCATION_ID = 1;
 
-let todo = {
-  phoneNumber: 9054164444,
-  password: "admin"
-};
+// This user data will depend on the situation
+let userPhoneNumber = "9054161111";
+let userFirstName = "John";
+let userLastName = "Doe";
 
-token = "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwicGhvbmVOdW1iZXIiOiI5MDU0MTY0NDQ0IiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNjM2NzcyMzI3LCJleHAiOjE2MzY3Nzk1Mjd9.LGR0xp8fusRC1Dz7xrRib4axW8cSbmjHh4jKuGOaTr0"
+async function processRental(phoneNumber, firstName, lastName) {
+  let userId;
 
-fetch('https://packt-project-development.herokuapp.com/login', {
-  method: 'POST',
-  body: JSON.stringify(todo),
-  headers: { 'Content-Type': 'application/json' }
-})
-  //.then(response => token = response.headers.get('set-cookie'))
-  .then(response => response.text())
-  .then(data => console.log(data))
-  .catch(err => console.log(err));
-
-
-fetch('https://packt-project-development.herokuapp.com/users', {
-  headers:{
-    cookie: token
-  }
-})
-  .then(response => response.text())
-  .then(data => console.log(data))
-  .catch(err => console.log(err));
-
-
-  //post rentals
-
-
-  
-fetch('https://packt-project-development.herokuapp.com/rentals', {
-    method: 'POST',
-    body: JSON.stringify({
-    startDate: new Date("January 1, 2021 00:00:00"),
-    expiryDate: new Date("January 1, 2030 00:00:00"),
-    userId: 1,
-    rentalClientId: 1,
-    }),
-    headers: { 
-      cookie: token,
-      'Content-Type': 'application/json' 
+  // Check if userId exists
+  await fetch(
+    "https://packt-project-development.herokuapp.com/users/phoneNumber",
+    {
+      method: "POST",
+      body: JSON.stringify({
+        phoneNumber: phoneNumber,
+      }),
+      headers: {
+        "x-api-key": "6de18130-637f-4c38-ac3e-81f18c8251d7",
+        "Content-Type": "application/json",
+      },
     }
-}).then(res => res.json())
-  .then(json => console.log(json));
+  ).then((response) => {
+    if (response.ok) {
+      return response.json().then((data) => {
+        userId = data.id;
+      });
+    }
+  });
+
+  // Create new user if user does not exist
+  if (!userId) {
+    await fetch("https://packt-project-development.herokuapp.com/users", {
+      method: "POST",
+      body: JSON.stringify({
+        phoneNumber: phoneNumber,
+        firstName: firstName,
+        lastName: lastName,
+      }),
+      headers: {
+        "x-api-key": "6de18130-637f-4c38-ac3e-81f18c8251d7",
+        "Content-Type": "application/json",
+      },
+    }).then((response) => {
+      if (response.ok) {
+        return response.json().then((data) => {
+          userId = data.id;
+        });
+      }
+    });
+  }
+
+  // Add the rental
+  await fetch("https://packt-project-development.herokuapp.com/rentals", {
+    method: "POST",
+    body: JSON.stringify({
+      userId: userId,
+      startDate: new Date(),
+      expiryDate: new Date(),
+      rentalClientId: LOCATION_ID,
+    }),
+    headers: {
+      "x-api-key": "6de18130-637f-4c38-ac3e-81f18c8251d7",
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    if (response.ok) {
+      return response.json().then((data) => {
+        console.log(data);
+      });
+    }
+  });
+}
+
+processRental(userPhoneNumber, userFirstName, userLastName).catch((e) => {
+  console.log("There has been a problem with your operation: " + e.message);
+});
+
+// fetch('https://packt-project-development.herokuapp.com/rentals', {
+//     method: 'POST',
+//     body: JSON.stringify({
+//     startDate: new Date("January 1, 2021 00:00:00"),
+//     expiryDate: new Date("January 1, 2030 00:00:00"),
+//     userId: 1,
+//     rentalClientId: LOCATION_ID,
+//     }),
+//     headers: {
+//       "x-api-key": API_KEY,
+//       'Content-Type': 'application/json'
+//     }
+// }).then(res => res.text())
+//   .then(json => console.log(json));
