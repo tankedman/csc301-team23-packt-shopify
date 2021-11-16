@@ -1,4 +1,5 @@
 import { Heading, Page, TextField, FormLayout, Button } from "@shopify/polaris";
+import {processRental} from "./packt_api/call_packt.js"
 
 const call_packt = require("call_packt.js")
 
@@ -17,7 +18,7 @@ const Index = () => (
         label="Number of Bags"
         onChange={() => {}}
       />
-      <Button onclick="call_packt">Submit</Button> 
+      <Button >Submit</Button> 
     </FormLayout>
   </Page>
 );

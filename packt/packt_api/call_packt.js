@@ -76,7 +76,7 @@ async function processRental(phoneNumber, numBags) {
   }
 }
 
-processRental(userPhoneNumber, userFirstName, userLastName).catch((e) => {
+processRental(userPhoneNumber, numBags).catch((e) => {
   console.log("There has been a problem with your operation: " + e.message);
 });
 
