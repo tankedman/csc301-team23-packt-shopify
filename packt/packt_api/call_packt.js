@@ -5,10 +5,10 @@ LOCATION_ID = 1;
 
 // This user data will depend on the situation
 let userPhoneNumber = "9054161111";
-let userFirstName = "John";
-let userLastName = "Doe";
+//let userFirstName = "John";
+//let userLastName = "Doe";
 
-async function processRental(phoneNumber, firstName, lastName) {
+async function processRental(phoneNumber, numBags) {
   let userId;
 
   // Check if userId exists
@@ -38,8 +38,6 @@ async function processRental(phoneNumber, firstName, lastName) {
       method: "POST",
       body: JSON.stringify({
         phoneNumber: phoneNumber,
-        firstName: firstName,
-        lastName: lastName,
       }),
       headers: {
         "x-api-key": "6de18130-637f-4c38-ac3e-81f18c8251d7",
@@ -55,25 +53,27 @@ async function processRental(phoneNumber, firstName, lastName) {
   }
 
   // Add the rental
-  await fetch("https://packt-project-development.herokuapp.com/rentals", {
-    method: "POST",
-    body: JSON.stringify({
-      userId: userId,
-      startDate: new Date(),
-      expiryDate: new Date(),
-      rentalClientId: LOCATION_ID,
-    }),
-    headers: {
-      "x-api-key": "6de18130-637f-4c38-ac3e-81f18c8251d7",
-      "Content-Type": "application/json",
-    },
-  }).then((response) => {
-    if (response.ok) {
-      return response.json().then((data) => {
-        console.log(data);
-      });
-    }
-  });
+  for(i = 0; i<numBags; i++){
+    await fetch("https://packt-project-development.herokuapp.com/rentals", {
+      method: "POST",
+      body: JSON.stringify({
+        userId: userId,
+        startDate: new Date(),
+        expiryDate: new Date(),
+        rentalClientId: LOCATION_ID,
+      }),
+      headers: {
+        "x-api-key": "6de18130-637f-4c38-ac3e-81f18c8251d7",
+        "Content-Type": "application/json",
+      },
+    }).then((response) => {
+      if (response.ok) {
+        return response.json().then((data) => {
+          console.log(data);
+        });
+      }
+    });
+  }
 }
 
 processRental(userPhoneNumber, userFirstName, userLastName).catch((e) => {
